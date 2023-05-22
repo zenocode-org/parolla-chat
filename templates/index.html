@@ -40,11 +40,18 @@
             });
         }
         // Manage user from localstorage, create if not exist using uuid or get the current user
-        var client_id = localStorage.getItem("client_id");
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        var client_id = urlParams.get("client_id");
+        var client_id_ls = localStorage.getItem("client_id");
+        
         if (client_id === null) {
-            client_id = broofa();
-            localStorage.setItem("client_id", client_id);
+            if (client_id_ls === null) {
+                client_id_ls = broofa();
+            }
+            client_id = client_id_ls;
         }
+        localStorage.setItem("client_id", client_id);
 
         var endpoint = "ws://localhost:9000/chat/" + client_id;
         var ws = new WebSocket(endpoint);
@@ -134,14 +141,29 @@
 
         </label>
         <div
-            class="fixed top-0 left-0 z-20 w-64 h-full transition-all duration-500 transform -translate-x-full bg-white dark:bg-gray-800 shadow-lg peer-checked:translate-x-0">
-            <div class="px-6 py-4">
+            class="fixed flex flex-col top-0 left-0 z-20 w-64 h-full transition-all duration-500 transform -translate-x-full bg-white dark:bg-gray-800 shadow-lg peer-checked:translate-x-0 items-center">
+            <div class="mx-6 my-4">
                 <h4 class="text-center text-4xl dark:text-neutral-200 text-slate-900 font-bold"> ParollaGPT </h4>
                 <p class="text-center dark:text-neutral-200 text-slate-900 text-xl" id="header"> Assistant de
                     Corse
                 </p>
 
                 <hr class="border-sky-800 mt-5">
+            </div>
+            <div class="flex flex-row space-x-6">
+                <a class="flex justify-self-end text-white hover:text-sky-800" href="https://twitter.com/zencode_corp" target="_blank">
+                    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid"
+                        width="31.812" height="26" viewBox="0 0 31.812 26">
+                        <path
+                            d="M20.877,2.000 C22.519,2.000 24.382,2.652 25.426,3.738 C26.724,3.486 27.949,3.025 29.050,2.386 C28.625,3.687 27.718,4.779 26.540,5.469 C27.693,5.332 28.797,5.035 29.820,4.590 C29.054,5.707 28.087,6.690 26.971,7.477 C26.981,7.715 26.987,7.955 26.987,8.195 C26.987,15.562 21.445,24.000 10.939,24.000 C7.715,24.000 4.507,23.133 1.982,21.551 C2.428,21.605 2.883,21.631 3.343,21.631 C6.019,21.631 8.482,20.740 10.439,19.242 C7.937,19.199 5.827,17.586 5.103,15.373 C5.450,15.437 5.810,15.473 6.178,15.473 C6.696,15.473 7.203,15.406 7.681,15.277 C5.068,14.768 3.100,12.514 3.100,9.813 C3.100,9.787 3.100,9.764 3.100,9.740 C3.871,10.158 4.750,10.410 5.687,10.440 C4.154,9.437 3.147,7.734 3.147,5.799 C3.147,4.777 3.428,3.818 3.919,2.998 C6.735,6.367 10.945,8.588 15.693,8.822 C15.594,8.414 15.543,7.984 15.543,7.553 C15.543,4.473 17.721,2.000 20.877,2.000 M29.820,4.590 L29.825,4.590 M20.877,-0.000 C17.033,-0.000 14.060,2.753 13.614,6.552 C10.425,5.905 7.524,4.204 5.440,1.711 C5.061,1.257 4.503,0.998 3.919,0.998 C3.867,0.998 3.815,1.000 3.763,1.004 C3.123,1.055 2.547,1.413 2.216,1.966 C1.525,3.122 1.159,4.447 1.159,5.799 C1.159,6.700 1.321,7.579 1.625,8.400 C1.300,8.762 1.113,9.238 1.113,9.740 L1.113,9.813 C1.113,11.772 1.882,13.589 3.160,14.952 C3.087,15.294 3.103,15.655 3.215,15.998 C3.657,17.348 4.459,18.510 5.499,19.396 C4.800,19.552 4.079,19.631 3.343,19.631 C2.954,19.631 2.577,19.609 2.222,19.565 C2.141,19.556 2.061,19.551 1.981,19.551 C1.148,19.551 0.391,20.078 0.108,20.886 C-0.202,21.770 0.140,22.753 0.932,23.249 C3.764,25.023 7.318,26.000 10.939,26.000 C17.778,26.000 22.025,22.843 24.383,20.195 C27.243,16.984 28.907,12.718 28.972,8.455 C29.899,7.682 30.717,6.790 31.410,5.792 C31.661,5.458 31.810,5.041 31.810,4.590 C31.810,3.909 31.473,3.308 30.958,2.946 C31.181,2.176 30.925,1.342 30.303,0.833 C29.940,0.537 29.496,0.386 29.049,0.386 C28.708,0.386 28.365,0.474 28.056,0.654 C27.391,1.040 26.680,1.344 25.931,1.562 C24.555,0.592 22.688,-0.000 20.877,-0.000 L20.877,-0.000 Z" />
+                    </svg>
+                </a>
+                <a class="flex justify-self-end text-white hover:text-sky-800" href="https://github.com/zenocode-org/parolla-chat" target="_blank">
+                    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid"
+                        width="31.812" height="26" viewBox="0 0 32 32">
+                        <path xmlns="http://www.w3.org/2000/svg" d="M16 1.375c-8.282 0-14.996 6.714-14.996 14.996 0 6.585 4.245 12.18 10.148 14.195l0.106 0.031c0.75 0.141 1.025-0.322 1.025-0.721 0-0.356-0.012-1.3-0.019-2.549-4.171 0.905-5.051-2.012-5.051-2.012-0.288-0.925-0.878-1.685-1.653-2.184l-0.016-0.009c-1.358-0.93 0.105-0.911 0.105-0.911 0.987 0.139 1.814 0.718 2.289 1.53l0.008 0.015c0.554 0.995 1.6 1.657 2.801 1.657 0.576 0 1.116-0.152 1.582-0.419l-0.016 0.008c0.072-0.791 0.421-1.489 0.949-2.005l0.001-0.001c-3.33-0.375-6.831-1.665-6.831-7.41-0-0.027-0.001-0.058-0.001-0.089 0-1.521 0.587-2.905 1.547-3.938l-0.003 0.004c-0.203-0.542-0.321-1.168-0.321-1.821 0-0.777 0.166-1.516 0.465-2.182l-0.014 0.034s1.256-0.402 4.124 1.537c1.124-0.321 2.415-0.506 3.749-0.506s2.625 0.185 3.849 0.53l-0.1-0.024c2.849-1.939 4.105-1.537 4.105-1.537 0.285 0.642 0.451 1.39 0.451 2.177 0 0.642-0.11 1.258-0.313 1.83l0.012-0.038c0.953 1.032 1.538 2.416 1.538 3.937 0 0.031-0 0.061-0.001 0.091l0-0.005c0 5.761-3.505 7.029-6.842 7.398 0.632 0.647 1.022 1.532 1.022 2.509 0 0.093-0.004 0.186-0.011 0.278l0.001-0.012c0 2.007-0.019 3.619-0.019 4.106 0 0.394 0.262 0.862 1.031 0.712 6.028-2.029 10.292-7.629 10.292-14.226 0-8.272-6.706-14.977-14.977-14.977-0.006 0-0.013 0-0.019 0h0.001z"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </div>
@@ -237,7 +259,8 @@
             </div>
         </div>
 
-        <form class="flex flex-row w-full lg:w-1/2 items-center rounded-lg py-5 md:p-5" action="" onsubmit="sendMessage(event)">
+        <form class="flex flex-row w-full lg:w-1/2 items-center rounded-lg py-5 md:p-5" action=""
+            onsubmit="sendMessage(event)">
             <div class="w-full relative mx-4">
                 <textarea id="messageText" rows="1"
                     class="p-2.5 w-full h-16 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -258,8 +281,7 @@
 </body>
 <script>
     function submitOnEnter(event) {
-        console.log(event)
-        if (event.which === 13) {
+        if (event.ctrlKey && event.key == "Enter") {
             if (!event.repeat) {
                 const newEvent = new Event("submit", { cancelable: true });
                 document.getElementById("send").click();
