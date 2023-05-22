@@ -18,8 +18,6 @@
                 "${workspaceFolder}\\log.ini",
                 "--reload-dir",
                 "${workspaceFolder}\\templates"
-
-
             ],
             "envFile": "${workspaceFolder}/.env",
             "jinja": true,

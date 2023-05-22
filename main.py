@@ -1,5 +1,6 @@
 """Main entrypoint for the app."""
 import logging
+import os
 import pickle
 from pathlib import Path
 from typing import Optional
@@ -36,7 +37,12 @@ async def get(request: Request):
 @app.websocket("/chat/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
     await websocket.accept()
+
+    if client_id not in os.environ.get("AUTHORIZED_CLIENT_IDS", []):
+        return
+
     course_manager = CourseManager(client_id)
+    logging.info(f"[{client_id}] - Connection authorized.")
     question_handler = QuestionGenCallbackHandler(websocket, client_id)
     stream_handler = StreamingLLMCallbackHandler(websocket, client_id)
     chat_history = []
@@ -44,7 +50,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     # Use the below line instead of the above line to enable tracing
     # Ensure `langchain-server` is running
     # qa_chain = get_chain(vectorstore, question_handler, stream_handler, tracing=True)
-    logging.error(client_id)
     while True:
         try:
             # Receive and send back the client message
