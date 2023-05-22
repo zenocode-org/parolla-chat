@@ -14,8 +14,8 @@
                 "--reload",
                 "--port",
                 "9000",
-                // "--log-config",
-                // "${workspaceFolder}\\log.ini",
+                "--log-config",
+                "${workspaceFolder}\\log.ini",
                 "--reload-dir",
                 "${workspaceFolder}\\templates"
 

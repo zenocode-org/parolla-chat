@@ -37,15 +37,14 @@ async def get(request: Request):
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
     await websocket.accept()
     course_manager = CourseManager(client_id)
-
-    question_handler = QuestionGenCallbackHandler(websocket)
-    stream_handler = StreamingLLMCallbackHandler(websocket)
+    question_handler = QuestionGenCallbackHandler(websocket, client_id)
+    stream_handler = StreamingLLMCallbackHandler(websocket, client_id)
     chat_history = []
     qa_chain = get_chain(vectorstore, question_handler, stream_handler)
     # Use the below line instead of the above line to enable tracing
     # Ensure `langchain-server` is running
     # qa_chain = get_chain(vectorstore, question_handler, stream_handler, tracing=True)
-
+    logging.error(client_id)
     while True:
         try:
             # Receive and send back the client message
@@ -86,4 +85,4 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=9000, log_config="log.ini")
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_config="log.ini")

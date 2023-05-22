@@ -237,8 +237,7 @@
             </div>
         </div>
 
-        <form class="flex flex-row w-full lg:w-1/2 items-center rounded-lg py-5 md:p-5" action=""
-            onsubmit="sendMessage(event)">
+        <form class="flex flex-row w-full lg:w-1/2 items-center rounded-lg py-5 md:p-5" action="" onsubmit="sendMessage(event)">
             <div class="w-full relative mx-4">
                 <textarea id="messageText" rows="1"
                     class="p-2.5 w-full h-16 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -257,5 +256,20 @@
             </div>
         </form>
 </body>
+<script>
+    function submitOnEnter(event) {
+        console.log(event)
+        if (event.which === 13) {
+            if (!event.repeat) {
+                const newEvent = new Event("submit", { cancelable: true });
+                document.getElementById("send").click();
+            }
+
+            event.preventDefault(); // Prevents the addition of a new line in the text field
+        }
+    }
+
+    document.getElementById("messageText").addEventListener("keydown", submitOnEnter);
+</script>
 
 </html>
