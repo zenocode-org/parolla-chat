@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<!-- <html lang="en" class="dark"> -->
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ParollaGPT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.cdnfonts.com/css/catamaran" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+
+
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer components {
+          .chat-message {
+            @apply p-2.5 m-2.5 rounded-md shadow-sm text-black dark:text-white
+          }
+        }
+      </style>
+    <style>
+        body {
+            font-family: 'catamaran', sans-serif;
+        }
+    </style>
+    <script>
+        function broofa() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        // Manage user from localstorage, create if not exist using uuid or get the current user
+        var client_id = localStorage.getItem("client_id");
+        if (client_id === null) {
+            client_id = broofa();
+            localStorage.setItem("client_id", client_id);
+        }
+
+        var endpoint = "ws://localhost:9000/chat/" + client_id;
+        var ws = new WebSocket(endpoint);
+        // Receive message from server word by word. Display the words as they are received.
+        ws.onmessage = function (event) {
+            var initConversation = document.getElementById('init-conversation');
+            var messages = document.getElementById('messages');
+            var data = JSON.parse(event.data);
+            if (data.sender === "bot") {
+                if (data.type === "start") {
+                    var header = document.getElementById('header');
+                    header.innerHTML = "En cours...";
+                    var div = document.createElement('div');
+                    div.className = 'chat-message bg-white dark:bg-zinc-800';
+                    var p = document.createElement('p');
+                    p.innerHTML = "<strong>" + "Parolla: " + "</strong>";
+                    div.appendChild(p);
+                    messages.appendChild(div);
+                } else if (data.type === "stream") {
+                    var header = document.getElementById('header');
+                    header.innerHTML = "Parolla ecrit...";
+                    var p = messages.lastChild.lastChild;
+                    if (data.message === "\n") {
+                        p.innerHTML += "<br>";
+                    } else {
+                        p.innerHTML += data.message;
+                    }
+                } else if (data.type === "info") {
+                    var header = document.getElementById('header');
+                    header.innerHTML = data.message;
+                } else if (data.type === "end") {
+                    var header = document.getElementById('header');
+                    header.innerHTML = "Posez une quetsion";
+                    var button = document.getElementById('send');
+                    button.disabled = false;
+                } else if (data.type === "error") {
+                    var header = document.getElementById('header');
+                    header.innerHTML = "Posez une quetsion";
+                    var button = document.getElementById('send');
+                    button.disabled = false;
+                    var p = messages.lastChild.lastChild;
+                    p.innerHTML += data.message;
+                }
+            } else {
+                var div = document.createElement('div');
+                div.className = 'chat-message bg-sky-800';
+                var p = document.createElement('p');
+                p.className = "text-right"
+                p.innerHTML = "<strong>" + "Vous: " + "</strong>";
+                p.innerHTML += data.message;
+                div.appendChild(p);
+                messages.appendChild(div);
+            }
+            // Scroll to the bottom of the chat
+            if (messages.children.length > 0) {
+                initConversation.className = 'hidden';
+            }
+            messages.scrollTop = messages.scrollHeight;
+        };
+        // Send message to server
+        function sendMessage(event, idElement = "messageText") {
+            event.preventDefault();
+            var message = document.getElementById(idElement).value;
+            if (message === "") {
+                return;
+            }
+            ws.send(message);
+            document.getElementById(idElement).value = "";
+
+            // Turn the button into a loading button
+            var button = document.getElementById('send');
+            button.disabled = true;
+        }
+    </script>
+</head>
+
+<body class="bg-white dark:bg-zinc-900">
+    <div class="flex h-0">
+        <input type="checkbox" id="drawer-toggle" class="relative sr-only peer">
+        <label for="drawer-toggle"
+            class="text-white absolute top-0 left-0 inline-block p-4 transition-all duration-500 peer-checked:left-64">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5 17h14M5 12h14M5 7h14" />
+            </svg>
+
+
+        </label>
+        <div
+            class="fixed top-0 left-0 z-20 w-64 h-full transition-all duration-500 transform -translate-x-full bg-white dark:bg-gray-800 shadow-lg peer-checked:translate-x-0">
+            <div class="px-6 py-4">
+                <h4 class="text-center text-4xl dark:text-neutral-200 text-slate-900 font-bold"> ParollaGPT </h4>
+                <p class="text-center dark:text-neutral-200 text-slate-900 text-xl" id="header"> Assistant de
+                    Corse
+                </p>
+
+                <hr class="border-sky-800 mt-5">
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col lg:items-center lg:justify-center h-screen">
+        <div class="flex flex-col dark:text-white rounded-xl p-5 mt-5 w-full lg:w-1/2 overflow-auto grow">
+            <div id="messages" class="space-y-4">
+                <div id="init-conversation" class="flex flex-col space-y-6 justify-center items-center mb-8">
+                    <div
+                        class="w-full md:w-2/4 transition duration-300 transform rounded-lg shadow-lg bg-zinc-200 border-4 border-dashed border-sky-700">
+                        <div class="py-4 px-6 flex flex-row space-x-6 justify-center items-center">
+                            <div class="flex flex-col space-y-2">
+                                <h2 class="text-xl font-bold text-sky-700">
+                                    Discuter avec ParollaGPT
+                                </h2>
+                                <p class="text-gray-600 text-sm">
+                                    Posez une question au professeur
+                                </p>
+                            </div>
+                            <div class="justify-between flex">
+                                <div class="text-sky-700 border-dotted border-2 rounded-full">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 7C12.5523 7 13 7.44772 13 8V13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13V8C11 7.44772 11.4477 7 12 7Z"
+                                            fill="currentColor" />
+                                        <path
+                                            d="M13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16C11 15.4477 11.4477 15 12 15C12.5523 15 13 15.4477 13 16Z"
+                                            fill="currentColor" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M7 2C4.23858 2 2 4.23858 2 7V17C2 19.7614 4.23858 22 7 22H17C19.7614 22 22 19.7614 22 17V7C22 4.23858 19.7614 2 17 2H7ZM4 7C4 5.34315 5.34315 4 7 4H17C18.6569 4 20 5.34315 20 7V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4 18.6569 4 17V7Z"
+                                            fill="currentColor" />
+                                    </svg>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="w-full md:w-2/4 transition duration-300 transform rounded-lg shadow-lg bg-zinc-200 hover:shadow-sky-700 border-4 border-solid border-sky-700">
+                        <div class="py-4 px-6 flex flex-row space-x-6 justify-center items-center">
+                            <div class="flex flex-col space-y-2">
+                                <h2 class="text-xl font-bold text-sky-700">
+                                    Pratiquer sa conjugaison
+                                </h2>
+                                <p class="text-gray-600 text-sm">
+                                    Exercise de conjugaison de verbes
+                                </p>
+                            </div>
+                            <form action="" class="justify-between flex"
+                                onsubmit="sendMessage(event, 'quickStartConjugaison')">
+                                <input type="text" class="hidden" id="quickStartConjugaison"
+                                    value="exercice de conjugaison">
+                                <button type="submit" class="text-sky-700 border-dotted border-2 rounded-full">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M7 8C6.44772 8 6 8.44772 6 9C6 9.55228 6.44772 10 7 10H17C17.5523 10 18 9.55228 18 9C18 8.44772 17.5523 8 17 8H7ZM7 11C6.44772 11 6 11.4477 6 12C6 12.5523 6.44772 13 7 13H13C13.5523 13 14 12.5523 14 12C14 11.4477 13.5523 11 13 11H7ZM6.93417 2C6.95604 2 6.97799 2 7 2L17.0658 2C17.9523 1.99995 18.7161 1.99991 19.3278 2.08215C19.9833 2.17028 20.6117 2.36902 21.1213 2.87868C21.631 3.38835 21.8297 4.0167 21.9179 4.67221C22.0001 5.28388 22.0001 6.0477 22 6.9342V13.0658C22.0001 13.9523 22.0001 14.7161 21.9179 15.3278C21.8297 15.9833 21.631 16.6117 21.1213 17.1213C20.6117 17.631 19.9833 17.8297 19.3278 17.9179C18.7161 18.0001 17.9523 18.0001 17.0658 18L15.0543 18L12.984 21.3124C12.5295 22.0396 11.4705 22.0396 11.016 21.3124L8.94576 18L6.9342 18C6.0477 18.0001 5.28388 18.0001 4.67221 17.9179C4.0167 17.8297 3.38835 17.631 2.87868 17.1213C2.36902 16.6117 2.17028 15.9833 2.08215 15.3278C1.99991 14.7161 1.99995 13.9523 2 13.0658L2 7C2 6.97799 2 6.95604 2 6.93417C1.99995 6.04769 1.99991 5.28387 2.08215 4.67221C2.17028 4.0167 2.36902 3.38835 2.87868 2.87868C3.38835 2.36902 4.0167 2.17028 4.67221 2.08215C5.28387 1.99991 6.04769 1.99995 6.93417 2Z"
+                                            fill="currentColor" />
+                                    </svg>
+
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div
+                        class="hidden w-full md:w-2/4 transition duration-300 transform rounded-lg shadow-lg bg-zinc-200 hover:shadow-sky-700 border-4 border-solid border-sky-700">
+                        <div class="py-4 px-6 flex flex-row space-x-6 justify-center items-center">
+                            <div class="flex flex-col space-y-2">
+                                <h2 class="text-xl font-bold text-sky-700">
+                                    Améliorer son ortographe
+                                </h2>
+                                <p class="text-gray-600 text-sm">
+                                    Répondez en Corse à des questions
+                                </p>
+                            </div>
+                            <form action="" class="justify-between flex"
+                                onsubmit="sendMessage(event, 'quickStartConjugaison')">
+                                <input type="text" class="hidden" id="quickStartConjugaison"
+                                    value="exercice d'ortographe">
+                                <button type="submit" class="text-sky-700 border-none">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M7 8C6.44772 8 6 8.44772 6 9C6 9.55228 6.44772 10 7 10H17C17.5523 10 18 9.55228 18 9C18 8.44772 17.5523 8 17 8H7ZM7 11C6.44772 11 6 11.4477 6 12C6 12.5523 6.44772 13 7 13H13C13.5523 13 14 12.5523 14 12C14 11.4477 13.5523 11 13 11H7ZM6.93417 2C6.95604 2 6.97799 2 7 2L17.0658 2C17.9523 1.99995 18.7161 1.99991 19.3278 2.08215C19.9833 2.17028 20.6117 2.36902 21.1213 2.87868C21.631 3.38835 21.8297 4.0167 21.9179 4.67221C22.0001 5.28388 22.0001 6.0477 22 6.9342V13.0658C22.0001 13.9523 22.0001 14.7161 21.9179 15.3278C21.8297 15.9833 21.631 16.6117 21.1213 17.1213C20.6117 17.631 19.9833 17.8297 19.3278 17.9179C18.7161 18.0001 17.9523 18.0001 17.0658 18L15.0543 18L12.984 21.3124C12.5295 22.0396 11.4705 22.0396 11.016 21.3124L8.94576 18L6.9342 18C6.0477 18.0001 5.28388 18.0001 4.67221 17.9179C4.0167 17.8297 3.38835 17.631 2.87868 17.1213C2.36902 16.6117 2.17028 15.9833 2.08215 15.3278C1.99991 14.7161 1.99995 13.9523 2 13.0658L2 7C2 6.97799 2 6.95604 2 6.93417C1.99995 6.04769 1.99991 5.28387 2.08215 4.67221C2.17028 4.0167 2.36902 3.38835 2.87868 2.87868C3.38835 2.36902 4.0167 2.17028 4.67221 2.08215C5.28387 1.99991 6.04769 1.99995 6.93417 2Z"
+                                            fill="currentColor" />
+                                    </svg>
+
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form class="flex flex-row w-full lg:w-1/2 items-center rounded-lg py-5 md:p-5" action=""
+            onsubmit="sendMessage(event)">
+            <div class="w-full relative mx-4">
+                <textarea id="messageText" rows="1"
+                    class="p-2.5 w-full h-16 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Poser une question sur la langue Corse"></textarea>
+                <button type="submit" id="send"
+                    class="absolute bottom-0 right-0 p-2 text-sky-700 rounded-full cursor-pointer hover:text-sky-400">
+                    <svg aria-hidden="true" class="w-6 h-6 rotate-90" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
+                        </path>
+                    </svg>
+                    <span class="sr-only">Envoyer</span>
+                </button>
+
+            </div>
+        </form>
+</body>
+
+</html>

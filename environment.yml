@@ -1,0 +1,22 @@
+name: parolla-chat-gpt
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip:
+    - openai
+    - fastapi
+    - black
+    - isort
+    - websockets
+    - pydantic
+    - langchain
+    - uvicorn
+    - jinja2
+    - faiss-cpu
+    - bs4
+    - unstructured
+    - sentence_transformers
+    - pypdf
+    - libmagic
+    - tiktoken
