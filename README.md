@@ -7,6 +7,9 @@ Learn Corsican language using Large Language Model through a discussion with a p
 We want to propose a 1 to 1 tutoring dialogue that will be based on large corpus of all kinds of books about the given language, how to conjugate verbs and more.
 We are planning to add more languages, but we started with Corsican language since it's the repository author country. We are targetting languages that have bad coverage in LLM datasets.
 
+## Demo
+DM on twitter to request a demo token.
+- https://twitter.com/zenocode_org
 
 ## ✅ Running locally
 1. Install dependencies: `pip install -r requirements.txt`
