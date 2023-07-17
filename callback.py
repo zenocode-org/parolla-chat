@@ -20,7 +20,7 @@ class StreamingLLMCallbackHandler(AsyncCallbackHandler):
 
     async def on_llm_start(self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any) -> None:
         """Run when LLM starts running."""
-        logging.debug(f"[{self.client_id}] [stream-tutor] [PROMPT] - {prompts}")
+        logging.info(f"[{self.client_id}] [stream-tutor] [PROMPT] - {prompts}")
 
     async def on_llm_end(
         self,
@@ -30,7 +30,7 @@ class StreamingLLMCallbackHandler(AsyncCallbackHandler):
         parent_run_id: Optional[UUID] = None,
         **kwargs: Any,
     ) -> None:
-        logging.debug(f"[{self.client_id}] [stream-tutor] [RESPONSE] - {response}")
+        logging.info(f"[{self.client_id}] [stream-tutor] [RESPONSE] - {response}")
 
 
 class QuestionGenCallbackHandler(AsyncCallbackHandler):
@@ -43,8 +43,8 @@ class QuestionGenCallbackHandler(AsyncCallbackHandler):
     async def on_llm_start(self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any) -> None:
         """Run when LLM starts running."""
         resp = ChatResponse(sender="bot", message="Exercise generation...", type="info")
-        logging.debug(f"[{self.client_id}] - Question generation started...")
-        logging.debug(f"[{self.client_id}] - {prompts}")
+        logging.info(f"[{self.client_id}] - Question generation started...")
+        logging.info(f"[{self.client_id}] - {prompts}")
         await self.websocket.send_json(resp.dict())
 
     async def on_llm_end(
@@ -55,5 +55,5 @@ class QuestionGenCallbackHandler(AsyncCallbackHandler):
         parent_run_id: Optional[UUID] = None,
         **kwargs: Any,
     ) -> None:
-        logging.debug(f"[{self.client_id}] - Response: {response}")
-        logging.debug(f"[{self.client_id}] - Question generation end...")
+        logging.info(f"[{self.client_id}] - Response: {response}")
+        logging.info(f"[{self.client_id}] - Question generation end...")

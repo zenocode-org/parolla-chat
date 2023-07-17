@@ -77,8 +77,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 }
             )
             chat_history.append((response, result["answer"]))
-            logging.debug(f"Etudiant: {response}")
-            logging.debug(f"Parolla: {result['answer']}")
+            logging.info(f"Etudiant: {response}")
+            logging.info(f"Parolla: {result['answer']}")
             end_resp = ChatResponse(sender="bot", message="", type="end")
             await websocket.send_json(end_resp.dict())
         except WebSocketDisconnect:
@@ -136,8 +136,8 @@ async def tutor_endpoint(websocket: WebSocket, client_id: str):
             await websocket.send_json(start_resp.dict())
 
             result = await tutor_chain.acall({"input": response})
-            logging.debug(f"[tutor][{client_id}] - Etudiant: {response}")
-            logging.debug(f"[tutor][{client_id}] - Parolla: {result}")
+            logging.info(f"[tutor][{client_id}] - Etudiant: {response}")
+            logging.info(f"[tutor][{client_id}] - Parolla: {result}")
             end_resp = ChatResponse(sender="bot", message="", type="end")
             await websocket.send_json(end_resp.dict())
         except WebSocketDisconnect:
