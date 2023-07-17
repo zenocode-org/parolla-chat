@@ -53,8 +53,8 @@
         }
         
         localStorage.setItem("client_id", client_id);
-
-        var endpoint = "ws://localhost:9000/tutor/" + client_id;
+        // TODO: Find a way to have this in a config
+        var endpoint = "wss://parolla.chat/tutor/" + client_id;
         var ws = new WebSocket(endpoint);
         // Receive message from server word by word. Display the words as they are received.
         ws.onmessage = function (event) {
