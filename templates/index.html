@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>ParollaGPT</title>
+    <title>ParollaChat</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.cdnfonts.com/css/catamaran" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -51,9 +51,10 @@
             }
             client_id = client_id_ls;
         }
+        
         localStorage.setItem("client_id", client_id);
 
-        var endpoint = "ws://localhost:9000/chat/" + client_id;
+        var endpoint = "ws://localhost:9000/tutor/" + client_id;
         var ws = new WebSocket(endpoint);
         // Receive message from server word by word. Display the words as they are received.
         ws.onmessage = function (event) {
@@ -143,10 +144,8 @@
         <div
             class="fixed flex flex-col top-0 left-0 z-20 w-64 h-full transition-all duration-500 transform -translate-x-full bg-white dark:bg-gray-800 shadow-lg peer-checked:translate-x-0 items-center">
             <div class="mx-6 my-4">
-                <h4 class="text-center text-4xl dark:text-neutral-200 text-slate-900 font-bold"> ParollaGPT </h4>
-                <p class="text-center dark:text-neutral-200 text-slate-900 text-xl" id="header"> Assistant de
-                    Corse
-                </p>
+                <h4 class="text-center text-4xl dark:text-neutral-200 text-slate-900 font-bold"> ParollaChat </h4>
+                <p class="text-center dark:text-neutral-200 text-slate-900 text-xl" id="header"> Assistant de Corse</p>
 
                 <hr class="border-sky-800 mt-5">
             </div>
@@ -176,7 +175,7 @@
                         <div class="py-4 px-6 flex flex-row space-x-6 justify-center items-center">
                             <div class="flex flex-col space-y-2">
                                 <h2 class="text-xl font-bold text-sky-700">
-                                    Discuter avec ParollaGPT
+                                    Discuter avec ParollaChat
                                 </h2>
                                 <p class="text-gray-600 text-sm">
                                     Posez une question au professeur

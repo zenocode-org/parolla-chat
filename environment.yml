@@ -1,4 +1,4 @@
-name: parolla-chat-gpt
+name: parolla-chat
 channels:
   - defaults
 dependencies:
@@ -20,3 +20,4 @@ dependencies:
     - pypdf
     - libmagic
     - tiktoken
+    - python-dotenv
