@@ -280,7 +280,7 @@
 </body>
 <script>
     function submitOnEnter(event) {
-        if (event.ctrlKey && event.key == "Enter") {
+        if (event.key == "Enter") {
             if (!event.repeat) {
                 const newEvent = new Event("submit", { cancelable: true });
                 document.getElementById("send").click();
