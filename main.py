@@ -107,9 +107,9 @@ async def tutor_endpoint(websocket: WebSocket, client_id: str):
     # Use the below line instead of the above line to enable tracing
     # Ensure `langchain-server` is running
     tutor_chain = get_tutor_chain(stream_handler, conversation_memory, TUTOR_PROMPT, tracing=False)
-    start_resp = ChatResponse(sender="bot", message="", type="start")
-    await websocket.send_json(start_resp.dict())
-    for paragraph in COURSE_INTRODUCTION_MESSAGE.split("\n"):
+    for paragraph in COURSE_INTRODUCTION_MESSAGE.split("\n\n"):
+        start_resp = ChatResponse(sender="bot", message="", type="start")
+        await websocket.send_json(start_resp.dict())
         introduction = ChatResponse(
             sender="bot",
             message=paragraph,
@@ -122,8 +122,8 @@ async def tutor_endpoint(websocket: WebSocket, client_id: str):
         )
         await websocket.send_json(introduction.dict())
         await websocket.send_json(new_line.dict())
-    end_resp = ChatResponse(sender="bot", message="", type="end")
-    await websocket.send_json(end_resp.dict())
+        end_resp = ChatResponse(sender="bot", message="", type="end")
+        await websocket.send_json(end_resp.dict())
     while True:
         try:
             # Receive and send back the client message
